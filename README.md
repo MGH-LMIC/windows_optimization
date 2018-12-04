@@ -1,7 +1,7 @@
 # Windows Setting Optimization
 Implementation of "Practical Window Setting Optimization for Medical Image Deep learning"
 
-## How to use
+## TODO list
 - output = WOLayer(input)
 - predefined convolution parameter for abdomen , bone, ... and so on
 - pretrained parameter (ICH, stone)
@@ -10,3 +10,8 @@ Implementation of "Practical Window Setting Optimization for Medical Image Deep 
   - Test code (jupyter)
   
 - Support function : Window setting -> convolution parameter (relu, sigmoid)
+
+## Requirement
+  
+## How to use
+  
