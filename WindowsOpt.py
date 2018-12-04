@@ -17,16 +17,15 @@ from Misc import *
 #-------------------------------------
 # Window Optimization layer : simple function
 #-------------------------------------
-def WindowOptimizer(inputs, act_window="sigmoid", upbound_window=255, nch_window=1, init_windows='abdomen', **kwargs):
+def WindowOptimizer(act_window="sigmoid", upbound_window=255, nch_window=1, init_windows='abdomen', **kwargs):
     '''
-    :param inputs: input tensor
     :param act_window: str. sigmoid or relu
     :param upbound_window: float. a upbound value of window
     :param nch_window: int. number of channels
     :param init_windows: str or list. If list, len of list should be same with nch_window.
     :param kwargs: other parameters for convolution layer.
 
-    :return: output tensor
+    :return: windows optimizer layer
 
     # Input shape
         Arbitrary.
@@ -109,3 +108,8 @@ def initialize_layer(layer, act_window, window_names='abdomen', upbound_value=25
     layer.set_weights([w_conv_new, b_conv_new])
 
     return layer
+
+
+def load_pretrained_weights(model, conv_layer_name='window_conv', classifier='ICH'):
+    ## TODO : Load pretrained weights of ICH and Stone classifier.
+    pass
