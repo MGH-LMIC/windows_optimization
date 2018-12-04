@@ -33,6 +33,8 @@ def WindowOptimizer(inputs, act_window="sigmoid", upbound_window=255, nch_window
     # Output shape
         Same shape as input.
     '''
+
+    ## Check parameter integrity.
     if nch_window == 1:
         assert(type(init_windows) == str)
     else:
@@ -48,9 +50,10 @@ def WindowOptimizer(inputs, act_window="sigmoid", upbound_window=255, nch_window
     ## Set activation layer
     act_layer = WinOptActivation(act_window=act_window, upbound_window=upbound_window, name=wa_name)
 
-    ## Initialize
-    initialize_layer(conv_layer, init_windows, init_windows)
+    ## Initialize convolution layer
+    initialize_layer(conv_layer, act_window=act_window, window_names=init_windows, upbound_value=upbound_window)
 
+    ## Return layer funcion
     def window_func(x):
         x = conv_layer(x)
         x = act_layer(x)
@@ -72,16 +75,24 @@ def WinOptActivation(act_window, upbound_window, name):
         act_layer = Activation(upbound_sigmoid, name=name)
     else:
         ## Todo: make a proper exception for here
-        raise Exception
+        raise Exception()
 
     return act_layer
 
 
-def initialize_layer(layer, act_window, window_name='abdomen'):
-    ## TODO : when conv layer have mutiple channels. Now it's only support for one channel.
-    # Assuming upbound value is 255 NOTE
-    upbound_value = 255.
-    wl, ww = window_settings[window_name]
+def initialize_layer(layer, act_window, window_names='abdomen', upbound_value=255.0):
+    '''
+    :param layer: 1x1 conv layer to initialize
+    :param act_window: str. sigmoid or relu
+    :param window_names: str. name of predefined window setting to init
+    :param upbound_value: float. default 255.0
+    :return:
+    '''
+
+    ## TODO : Make function for when conv layer have mutiple channels. Now it's only support for one channel.
+
+    ## Get window settings from dictionay
+    wl, ww = window_settings[window_names]
 
     if act_window == 'sigmoid':
         w_new, b_new = get_init_conv_params_sigmoid(wl, ww, upbound_value=upbound_value)
