@@ -59,13 +59,17 @@ def WinOptConv(nch_window, conv_layer_name, init_windows, act_window, upbound_wi
     else:
         assert (type(init_windows) == list and len(init_windows) == nch_window)
 
-    ## TODO : Make function for when winopt_conv layer have mutiple channels. Now it's only support for one channel.
+    if nch_window == 1:
+        assert (type(init_windows) == str)
+        w_new, b_new = get_initial_parameter_with_name(window_name=init_windows, act_window=act_window, upbound_value=upbound_window)
 
-    w_new, b_new = get_initial_parameter_with_name(window_name=init_windows, act_window=act_window, upbound_value=upbound_window)
+        conv_layer = Conv2D(filters=nch_window, kernel_size=(1, 1), strides=(1, 1), padding="same", name=conv_layer_name,
+                            kernel_initializer=Constant(w_new) , bias_initializer=Constant(b_new),
+                            **kwargs)
+    else:
+        ## TODO : Make function for when winopt_conv layer have mutiple channels. Now it's only support for one channel.
+        raise NotImplementedError()
 
-    conv_layer = Conv2D(filters=nch_window, kernel_size=(1, 1), strides=(1, 1), padding="same", name=conv_layer_name,
-                        kernel_initializer=Constant(w_new) , bias_initializer=Constant(b_new),
-                        **kwargs)
     return conv_layer
 
 
