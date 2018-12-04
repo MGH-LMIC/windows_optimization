@@ -1,6 +1,14 @@
 # Windows Setting Optimization
 Implementation of "Practical Window Setting Optimization for Medical Image Deep learning"
 
+## Introduction
+link to original paper: http://...arxiv...
+blah blah our paper is king wang jjang.
+
+## Requirement
+  
+## How to use
+  
 ## TODO list
 - output = WindowOptimizer(input)
 - predefined convolution parameter for abdomen , bone, ... and so on
@@ -10,8 +18,3 @@ Implementation of "Practical Window Setting Optimization for Medical Image Deep 
   - Test code (jupyter)
   
 - Support function : Window setting -> convolution parameter (relu, sigmoid)
-
-## Requirement
-  
-## How to use
-  
