@@ -39,7 +39,7 @@ def WindowOptimizer(act_window="sigmoid", upbound_window=255, nch_window=1, init
     else:
         assert(type(init_windows) == list and len(init_windows) == nch_window)
 
-    ## TODO: customize layer name
+    ## TODO: customizable layer name
     wc_name = 'window_conv'
     wa_name = 'window_act'
 
