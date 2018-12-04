@@ -9,6 +9,9 @@ blah blah our paper is king wang jjang.
   
 ## How to use
   
+## License
+어떡할까...  
+
 ## TODO list
 ~~- output = WindowOptimizer(input)~~  
 ~~- predefined convolution parameter for abdomen , bone, ... and so on~~  
