@@ -8,6 +8,16 @@ window_settings = {
     "brain": [50., 100.],
 }
 
+def get_init_conv_params(wl, ww, act_window, upbound_value):
+    if act_window == 'sigmoid':
+        w_new, b_new = get_init_conv_params_sigmoid(wl, ww, upbound_value=upbound_value)
+    elif act_window == 'relu':
+        w_new, b_new = get_init_conv_params_relu(wl, ww, upbound_value=upbound_value)
+    else:
+        ## TODO : make a proper exception
+        raise Exception()
+    return w_new, b_new
+
 def get_init_conv_params_relu(wl, ww, upbound_value=255.):
     w = upbound_value / ww
     b = -1. * upbound_value * (wl - ww / 2.) / ww

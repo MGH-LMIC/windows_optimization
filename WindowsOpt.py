@@ -61,7 +61,7 @@ def WinOptConv(nch_window, conv_layer_name, init_windows, act_window, upbound_wi
 
     ## TODO : Make function for when winopt_conv layer have mutiple channels. Now it's only support for one channel.
 
-    w_new, b_new = get_initial_parameter(window_settings, window_name=init_windows, act_window=act_window,  upbound_value=upbound_window)
+    w_new, b_new = get_initial_parameter_with_name(window_name=init_windows, act_window=act_window, upbound_value=upbound_window)
 
     conv_layer = Conv2D(filters=nch_window, kernel_size=(1, 1), strides=(1, 1), padding="same", name=conv_layer_name,
                         kernel_initializer=Constant(w_new) , bias_initializer=Constant(b_new),
@@ -69,11 +69,11 @@ def WinOptConv(nch_window, conv_layer_name, init_windows, act_window, upbound_wi
     return conv_layer
 
 
-def get_initial_parameter(window_settings, window_name, act_window, upbound_value):
+def get_initial_parameter_with_name(window_name, act_window, upbound_value):
     ## Get window settings from dictionay
     wl, ww = window_settings[window_name]
     ## Set convolution layer
-    w_new, b_new = get_init_value(wl, ww, act_window, upbound_value)
+    w_new, b_new = get_init_conv_params(wl, ww, act_window, upbound_value)
     return w_new, b_new
 
 
@@ -95,17 +95,6 @@ def WinOptActivation(act_window, upbound_window, act_layer_name):
     return act_layer
 
 
-def get_init_value(wl, ww, act_window, upbound_value):
-    if act_window == 'sigmoid':
-        w_new, b_new = get_init_conv_params_sigmoid(wl, ww, upbound_value=upbound_value)
-    elif act_window == 'relu':
-        w_new, b_new = get_init_conv_params_relu(wl, ww, upbound_value=upbound_value)
-    else:
-        ## TODO : make a proper exception
-        raise Exception()
-    return w_new, b_new
-
-
 def load_weight_layer(layer, act_window, window_names='abdomen', upbound_value=255.0):
     '''
     :param layer: 1x1 conv layer to initialize
@@ -118,7 +107,7 @@ def load_weight_layer(layer, act_window, window_names='abdomen', upbound_value=2
     ## Get window settings from dictionay
     wl, ww = window_settings[window_names]
 
-    w_new, b_new = get_init_value(wl, ww, act_window, upbound_value)
+    w_new, b_new = get_init_conv_params(wl, ww, act_window, upbound_value)
     w_conv_ori, b_conv_ori = layer.get_weights()
     w_conv_new = np.zeros_like(w_conv_ori)
     w_conv_new[0, 0, 0, :] = w_new * np.ones(w_conv_ori.shape[-1], dtype=w_conv_ori.dtype)
