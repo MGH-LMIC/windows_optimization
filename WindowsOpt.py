@@ -144,6 +144,13 @@ def initialize_window_setting(model, act_window="sigmoid", init_windows="abdomen
 if __name__ == "__main__":
 
     ## WSO configurations
+    # ## For a single-channel WSOlayer
+    # nch_window = 1
+    # act_window = "sigmoid"
+    # upbound_window = 255.0
+    # init_windows = "brain"
+
+    # For multi-channel WSOlayer
     nch_window = 2
     act_window = "sigmoid"
     upbound_window = 255.0
@@ -198,3 +205,5 @@ if __name__ == "__main__":
     print("Loaded parameter : w={} b={}".format(ws[0, 0, 0, :], bs)) # check result
     print("Expected paramter(brain) : w=[0.11074668] b=[-5.5373344]")
     print("Expected paramter(subdural) : w=[0.08518976] b=[-4.259488]")
+
+
