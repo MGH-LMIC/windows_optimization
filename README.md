@@ -7,6 +7,11 @@ link to original paper: http://...arxiv...
 blah blah our paper is king wang jjang.
 
 ## Requirement
+Keras  
+tensorflow-gpu  
+openCV  
+
+
   
 ## How to use
 
