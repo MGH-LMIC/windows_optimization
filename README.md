@@ -1,5 +1,6 @@
 # Windows Setting Optimization
 Implementation of "Practical Window Setting Optimization for Medical Image Deep learning"
+arXiv link :  
 
 ## Introduction
 link to original paper: http://...arxiv...
@@ -13,11 +14,11 @@ blah blah our paper is king wang jjang.
 Please cite windows optimization in your publications if it helps your research:
 
 ```
-@ARTICLE{arXiv:1801.05746,
-         author = {V. Iglovikov and A. Shvets},
-          title = {TernausNet: U-Net with VGG11 Encoder Pre-Trained on ImageNet for Image Segmentation},
-        journal = {ArXiv e-prints},
-         eprint = {1801.05746}, 
+@ARTICLE{arXiv:
+         author = {HK Lee, My},
+          title = {},
+        journal = {},
+         eprint = {}, 
            year = 2018
         }
 ```
