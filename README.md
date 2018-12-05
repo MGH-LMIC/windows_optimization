@@ -13,9 +13,10 @@ The recent advancements in deep learning have allowed for numerous applications 
 - Deploy trained model in the original paper (see Deploy_code_WindowsOptimizer.ipynb or deploy.py)
   
 ## Requirement for test codes
-- Keras=2.2.4  
-- tensorflow-gpu=1.12.0  
-- openCV=3.4.2   
+- Keras                 2.2.4  
+- tensorflow-gpu        1.12.0  
+- openCV                3.4.2   
+- matplotlib            2.2.2 
 
 
 ## Citing windows optimization
