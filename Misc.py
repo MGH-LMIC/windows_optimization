@@ -2,10 +2,13 @@
 import numpy as np
 
 # [WL, WW]
-window_settings = {
+dict_window_settings = {
+    "brain": [50., 100.],
+    "subdural": [50., 130.],
+    "ich": [(50., 100.), (50., 130.)],
     "abdomen": [40., 400.],
     "bone": [300., 1500.],
-    "brain": [50., 100.],
+    "stone": [(300., 1500.), (40., 400.)],
 }
 
 def get_init_conv_params(wl, ww, act_window, upbound_value):
