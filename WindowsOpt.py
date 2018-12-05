@@ -13,16 +13,11 @@ from keras.callbacks import ModelCheckpoint, LearningRateScheduler, TensorBoard,
 from keras.models import Model, model_from_json
 from keras.applications.inception_v3 import InceptionV3
 
-from config import *
 from functions import *
 
 #-------------------------------------
 # Window Optimization layer : simple function
 #-------------------------------------
-
-def func(param1, param2, kparam1=1, kparam2=2, *args, **kwargs):
-    print("param1:", param1)
-
 
 def WindowOptimizer(act_window="sigmoid", upbound_window=255.0, nch_window=1, **kwargs):
     '''
@@ -44,7 +39,7 @@ def WindowOptimizer(act_window="sigmoid", upbound_window=255.0, nch_window=1, **
     wc_name = 'window_conv'
     wa_name = 'window_act'
 
-    print("WindowOptimze kwargs : ", kwargs)
+    # print("WindowOptim kwargs : ", kwargs)
     conv_layer = WinOptConv(nch_window=nch_window, conv_layer_name=wc_name, **kwargs)
     act_layer = WinOptActivation(act_window=act_window, upbound_window=upbound_window, act_layer_name=wa_name)
 
@@ -145,6 +140,7 @@ def initialize_window_setting(model, act_window="sigmoid", init_windows="abdomen
     return model
 
 
+## Test codes of this module
 if __name__ == "__main__":
 
     ## WSO configurations
@@ -187,7 +183,7 @@ if __name__ == "__main__":
 
     ## Double check initialized parameters for WSO
     names = [weight.name for layer in model.layers for weight in layer.weights]
-    print(names)
+    # print(names)
     weights = model.get_weights()
 
     for name, weight in zip(names, weights):
@@ -199,5 +195,6 @@ if __name__ == "__main__":
 
     print("window optimization modeul set up (initialized with {} settings)".format(init_windows))
     print("(WL, WW)={}".format(dict_window_settings[init_windows]))
-    print("Loaded parameter : w={} b={}".format(ws[0, 0, 0, :], bs))
-
+    print("Loaded parameter : w={} b={}".format(ws[0, 0, 0, :], bs)) # check result
+    print("Expected paramter(brain) : w=[0.11074668] b=[-5.5373344]")
+    print("Expected paramter(subdural) : w=[0.08518976] b=[-4.259488]")

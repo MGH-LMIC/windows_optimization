@@ -105,3 +105,8 @@ venv.bak/
 
 # Pycharm project files
 .idea
+
+# data folder of this project
+images/
+models/
+results/

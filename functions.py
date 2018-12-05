@@ -6,6 +6,16 @@ import tensorflow as tf
 from keras import backend as K
 from keras.models import model_from_json
 
+# [WL, WW]
+dict_window_settings = {
+    "brain": (50., 100.),
+    "subdural": (50., 130.),
+    "abdomen": (40., 400.),
+    "bone": (300., 1500.),
+    "ich_init": ["brain", "subdural"],
+    "stone_init": ["bone", "abdomen"],
+}
+
 def set_gpu_config(gpu_ids):
     # set gpu_id
     str_gpu_id = ",".join([str(item) for item in gpu_ids])
