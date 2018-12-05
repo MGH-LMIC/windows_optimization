@@ -9,9 +9,9 @@ The recent advancements in deep learning have allowed for numerous applications 
 
 ## How to use
 - Download images and models
-- Define WSO layer with your own model
-- Deploy model
-
+- Define WSO layer with your own model (see HowToUse.ipynb or WindowsOpt.py)
+- Deploy trained model in the original paper (see Deploy_code_WindowsOptimizer.ipynb or deploy.py)
+  
 ## Requirement for test codes
 - Keras=2.2.4  
 - tensorflow-gpu=1.12.0  
