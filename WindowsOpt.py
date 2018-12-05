@@ -13,12 +13,18 @@ from keras.callbacks import ModelCheckpoint, LearningRateScheduler, TensorBoard,
 from keras.models import Model, model_from_json
 from keras.applications.inception_v3 import InceptionV3
 
-from Misc import *
+from config import *
+from functions import *
 
 #-------------------------------------
 # Window Optimization layer : simple function
 #-------------------------------------
-def WindowOptimizer(act_window="sigmoid", upbound_window=255, nch_window=1, **kwargs):
+
+def func(param1, param2, kparam1=1, kparam2=2, *args, **kwargs):
+    print("param1:", param1)
+
+
+def WindowOptimizer(act_window="sigmoid", upbound_window=255.0, nch_window=1, **kwargs):
     '''
     :param act_window: str. sigmoid or relu
     :param upbound_window: float. a upbound value of window
@@ -38,7 +44,8 @@ def WindowOptimizer(act_window="sigmoid", upbound_window=255, nch_window=1, **kw
     wc_name = 'window_conv'
     wa_name = 'window_act'
 
-    conv_layer = WinOptConv(nch_window=nch_window, conv_layer_name=wc_name)
+    print("WindowOptimze kwargs : ", kwargs)
+    conv_layer = WinOptConv(nch_window=nch_window, conv_layer_name=wc_name, **kwargs)
     act_layer = WinOptActivation(act_window=act_window, upbound_window=upbound_window, act_layer_name=wa_name)
 
     ## Return layer funcion
@@ -49,10 +56,10 @@ def WindowOptimizer(act_window="sigmoid", upbound_window=255, nch_window=1, **kw
 
     return window_func
 
-def WinOptConv(nch_window, conv_layer_name):
+def WinOptConv(nch_window, conv_layer_name, **kwargs):
     conv_layer = Conv2D(filters=nch_window, kernel_size=(1, 1), strides=(1, 1), padding="same",
                         name=conv_layer_name,
-                        kernel_initializer="he_normal", kernel_regularizer=regularizers.l2(0.5 * 1e-5))
+                        **kwargs)
     return conv_layer
 
 def WinOptActivation(act_window, upbound_window, act_layer_name):
@@ -72,64 +79,58 @@ def WinOptActivation(act_window, upbound_window, act_layer_name):
 
     return act_layer
 
-# def get_initial_parameter_with_name(window_name, act_window, upbound_value):
-#     ## Get window settings from dictionay
-#     wl, ww = window_settings[window_name]
-#     ## Set convolution layer
-#     w_new, b_new = get_init_conv_params(wl, ww, act_window, upbound_value)
-#     return w_new, b_new
+def get_w_b_with_name(window_name, act_window, upbound_value):
+    ## Get window settings from dictionay
+    wl, ww = dict_window_settings[window_name]
+    ## Set convolution layer
+    w_new, b_new = get_init_conv_params(wl, ww, act_window, upbound_value)
+    return w_new, b_new
 
-# def load_weight_layer(layer, act_window, window_names='abdomen', upbound_value=255.0):
-#     '''
-#     :param layer: 1x1 conv layer to initialize
-#     :param act_window: str. sigmoid or relu
-#     :param window_names: str. name of predefined window setting to init
-#     :param upbound_value: float. default 255.0
-#     :return:
-#     '''
-#
-#     ## Get window settings from dictionay
-#     wl, ww = window_settings[window_names]
-#
-#     w_new, b_new = get_init_conv_params(wl, ww, act_window, upbound_value)
-#     w_conv_ori, b_conv_ori = layer.get_weights()
-#     w_conv_new = np.zeros_like(w_conv_ori)
-#     w_conv_new[0, 0, 0, :] = w_new * np.ones(w_conv_ori.shape[-1], dtype=w_conv_ori.dtype)
-#     b_conv_new = b_new * np.ones(b_conv_ori.shape, dtype=b_conv_ori.dtype)
-#     layer.set_weights([w_conv_new, b_conv_new])
-#
-#     return layer
+def is_list(params):
+    return type(params) == list
 
-def initialize_window_setting(model, act_window="sigmoid", init_windows="abdomen", conv_layer_name="window_conv"):
+def is_str(params):
+    return type(params) == str
+
+def is_tuple(params):
+    return type(params) == tuple
+
+
+def initialize_window_setting(model, act_window="sigmoid", init_windows="abdomen", conv_layer_name="window_conv", upbound_window=255.0):
+    '''
+    :param model:
+    :param act_window: str. 'sigmoid' or 'relu'
+    :param init_windows: str or list of str. see config.py
+    :param conv_layer_name: str. a name of window
+    :return: mdoel. with loaded weight.
+    '''
 
     # get all layer names
     layer_names = [layer.name for layer in model.layers]
+    windows_setting = dict_window_settings[init_windows]
 
     # multi-channel window settings
-    if init_windows in ["stone", "ich"]:
-        n_window_settings = len(dict_window_settings[init_windows])
+    if is_list(windows_setting):
+        window_settings = [dict_window_settings[name] for name in windows_setting]
+        n_window_settings = len(window_settings )
+
         w_conv_ori, b_conv_ori = model.layers[layer_names.index(conv_layer_name)].get_weights()
         n_windows = w_conv_ori.shape[-1]
         w_conv_new = np.zeros((1,1,1,n_windows), dtype=np.float32)
         b_conv_new = np.zeros(n_windows, dtype=np.float32)
-        for idx, window_setting in enumerate(dict_window_settings[init_windows]):
-            wl, ww = window_setting
-            if act_window == "relu":
-                w_new, b_new = get_init_conv_params_relu(wl, ww)
-            elif act_window == "sigmoid":
-                w_new, b_new = get_init_conv_params_sigmoid(wl, ww)
 
+        for idx, window_setting in enumerate(window_settings):
+            wl, ww = window_setting
+            w_new, b_new = get_init_conv_params(wl, ww, act_window, upbound_window)
             w_conv_new[0,0,0,range(idx, n_windows, n_window_settings)] = w_new
             b_conv_new[range(idx, n_windows, n_window_settings)] = b_new
 
         model.layers[layer_names.index(conv_layer_name)].set_weights([w_conv_new, b_conv_new])
+
     # single-channel window setting
-    else:
-        wl, ww = dict_window_settings[init_windows]
-        if act_window == "relu":
-            w_new, b_new = get_init_conv_params_relu(wl, ww)
-        elif act_window == "sigmoid":
-            w_new, b_new = get_init_conv_params_sigmoid(wl, ww)
+    elif is_tuple(windows_setting):
+        wl, ww = windows_setting
+        w_new, b_new = get_init_conv_params(wl, ww, act_window, upbound_window)
 
         w_conv_ori, b_conv_ori = model.layers[layer_names.index(conv_layer_name)].get_weights()
         w_conv_new = np.zeros_like(w_conv_ori)
@@ -138,14 +139,10 @@ def initialize_window_setting(model, act_window="sigmoid", init_windows="abdomen
 
         model.layers[layer_names.index(conv_layer_name)].set_weights([w_conv_new, b_conv_new])
 
-    # print("window_func={}, window_name={} [{}]".format(window_func, window_name, dict_window_settings[window_name]))
-    # print(model.layers[layer_names.index(conv_layer_name)].get_weights())
+    else:
+        raise ValueError()
 
     return model
-
-# def load_pretrained_weights(model, conv_layer_name='window_conv', classifier='ICH'):
-#     ## TODO : Load pretrained weights of ICH and Stone classifier.
-#     pass
 
 
 if __name__ == "__main__":
@@ -153,8 +150,8 @@ if __name__ == "__main__":
     ## WSO configurations
     nch_window = 2
     act_window = "sigmoid"
-    upbound_window = 255
-    init_windows = "ich"
+    upbound_window = 255.0
+    init_windows = "ich_init"
 
 
     # x = load_example_dicom() # They should be 2d-HU values matrix
@@ -163,7 +160,10 @@ if __name__ == "__main__":
 
     #### NOTE
     ## Define a window setting optimization layer
-    x = WindowOptimizer(nch_window=nch_window, act_window=act_window, upbound_window=upbound_window)(input_tensor)
+    x = WindowOptimizer(nch_window=nch_window, act_window=act_window, upbound_window=upbound_window,
+                        kernel_initializer="he_normal",
+                        kernel_regularizer=regularizers.l2(0.5 * 1e-5)
+                        )(input_tensor)
 
     ## ... add some your layer here
     x = Conv2D(32, (3, 3), activation=None, padding="same", name="conv1")(x)
@@ -179,7 +179,7 @@ if __name__ == "__main__":
 
     #### NOTE
     ## Initialize parameters of window setting opt module
-    model = initialize_window_setting(model, act_window=act_window, init_windows=init_windows)
+    model = initialize_window_setting(model, act_window=act_window, init_windows=init_windows, upbound_window=upbound_window)
 
     optimizer = SGD(lr=0.0001, decay=0, momentum=0.9, nesterov=True)
     model.compile(optimizer=optimizer, loss='binary_crossentropy', metrics=["accuracy"])
@@ -187,6 +187,7 @@ if __name__ == "__main__":
 
     ## Double check initialized parameters for WSO
     names = [weight.name for layer in model.layers for weight in layer.weights]
+    print(names)
     weights = model.get_weights()
 
     for name, weight in zip(names, weights):
@@ -195,7 +196,8 @@ if __name__ == "__main__":
                 ws = weight
             if "bias:0" in name:
                 bs = weight
+
     print("window optimization modeul set up (initialized with {} settings)".format(init_windows))
     print("(WL, WW)={}".format(dict_window_settings[init_windows]))
-    print("w={} b={}".format(ws[0, 0, 0, :], bs))
+    print("Loaded parameter : w={} b={}".format(ws[0, 0, 0, :], bs))
 
