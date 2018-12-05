@@ -1,12 +1,22 @@
 
 import subprocess
 import shlex
-import numpy as np
 
 from functions import *
-from configs import *
+from config import *
+
+def check_model_exist():
+
+def check_model_exist():
+
 
 if __name__ == "__main__":
+
+    if check_image_exist() == False:
+        os.system("bash download_images.sh")
+
+    if check_model_exist() == False:
+        os.system("bash download_models.sh")
 
     #-----------------------------------------------------------
     # Set up configurations

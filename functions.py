@@ -33,6 +33,9 @@ def load_model(model_json_file, model_weights_file, window_func, window_upbound)
         model = model_from_json(model_json, custom_objects={"upbound_relu":upbound_relu})
     elif window_func == "sigmoid":
         model = model_from_json(model_json, custom_objects={"upbound_sigmoid":upbound_sigmoid})
+    else:
+        raise ValueError()
+
     # load weights
     model.load_weights(model_weights_file)
 
@@ -67,3 +70,38 @@ def save_image(result_file_path, image, hist_equal=False):
 
     # save original image
     cv2.imwrite(result_file_path, image)
+
+
+def get_init_conv_params(wl, ww, act_window, upbound_value):
+    if act_window == 'sigmoid':
+        w_new, b_new = get_init_conv_params_sigmoid(wl, ww, upbound_value=upbound_value)
+    elif act_window == 'relu':
+        w_new, b_new = get_init_conv_params_relu(wl, ww, upbound_value=upbound_value)
+    else:
+        ## TODO : make a proper exception
+        raise Exception()
+    return w_new, b_new
+
+def get_init_conv_params_relu(wl, ww, upbound_value=255.):
+    w = upbound_value / ww
+    b = -1. * upbound_value * (wl - ww / 2.) / ww
+    return (w, b)
+
+def get_init_conv_params_sigmoid(wl, ww, smooth=1., upbound_value=255.):
+    w = 2./ww * np.log(upbound_value/smooth - 1.)
+    b = -2.*wl/ww * np.log(upbound_value/smooth - 1.)
+    return (w, b)
+
+def get_window_settings_relu(w, b, upbound_value=255.):
+    wl = upbound_value/(2.*w) - b/w
+    ww = upbound_value / w
+    return (wl, ww)
+
+def get_window_settings_sigmoid(w, b, smooth=1., upbound_value=255.):
+    wl = b/w
+    ww = 2./w * np.log(upbound_value/smooth - 1.)
+    return (wl, ww)
+
+def get_pretrained_model_from_internet():
+    ## TODO : A Pretrained Inception-V3 model with ICH, StoneAI
+    pass
