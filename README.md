@@ -8,9 +8,19 @@ blah blah our paper is king wang jjang.
 ## Requirement
   
 ## How to use
-  
-## License
-어떡할까...  
+
+## Citing windows optimization
+Please cite windows optimization in your publications if it helps your research:
+
+```
+@ARTICLE{arXiv:1801.05746,
+         author = {V. Iglovikov and A. Shvets},
+          title = {TernausNet: U-Net with VGG11 Encoder Pre-Trained on ImageNet for Image Segmentation},
+        journal = {ArXiv e-prints},
+         eprint = {1801.05746}, 
+           year = 2018
+        }
+```
 
 ## TODO list
 ~~- output = WindowOptimizer(input)~~  
