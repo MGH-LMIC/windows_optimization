@@ -1,29 +1,50 @@
-
+import os
 import subprocess
 import shlex
 
 from functions import *
-from config import *
+
+# configurations for dirname
+image_base_dir = "images"
+model_base_dir = "models"
+result_base_dir = "results"
 
 def check_model_exist():
+    if not os.path.isdir(model_base_dir):
+        return False
+    if os.listdir(model_base_dir) == ['inceptionv3_ich_sigmoid_U255_nch2', 'inceptionv3_stone_sigmoid_U255_nch2']:
+        return True
+    return False
 
-def check_model_exist():
-
+def check_image_exist():
+    if not os.path.isdir(image_base_dir):
+        return False
+    if os.listdir(image_base_dir) == ['inceptionv3_ich_sigmoid_U255_nch2', 'inceptionv3_stone_sigmoid_U255_nch2']:
+        return True
+    return False
 
 if __name__ == "__main__":
+    # -----------------------------------------------------------
+    # Load sample images
+    # -----------------------------------------------------------
+    if not check_image_exist():
+        print("Downloading sample images...")
+        subprocess.call(shlex.split("bash download_images.sh"))
 
-    if check_image_exist() == False:
-        os.system("bash download_images.sh")
+    # -----------------------------------------------------------
+    # Load trained model
+    # -----------------------------------------------------------
+    if not check_model_exist():
+        print("Downloading trained models")
+        subprocess.call(shlex.split("bash download_models.sh"))
 
-    if check_model_exist() == False:
-        os.system("bash download_models.sh")
-
-    #-----------------------------------------------------------
+    # -----------------------------------------------------------
     # Set up configurations
-    #-----------------------------------------------------------
+    # -----------------------------------------------------------
     task = "ich"
     labels = ["ich-negative", "ich-positive"]
     model_name = "inceptionv3_ich_sigmoid_U255_nch2"
+
     # task = "stone"
     # labels = ["stone-negative", "stone-positive"]
     # model_name = "inceptionv3_stone_sigmoid_U255_nch2"
@@ -33,8 +54,10 @@ if __name__ == "__main__":
     window_upbound = 255
     window_nch = 2
 
+    ## GPU usage
     list_gpus = [0]
 
+    ## Dir setting
     image_dir = "{}/{}".format(image_base_dir, task)
     model_dir = "{}/{}".format(model_base_dir, model_name)
 
@@ -45,7 +68,12 @@ if __name__ == "__main__":
     # make result dir
     result_dir = "{}/{}".format(result_base_dir, model_name)
     if not os.path.exists(result_dir):
-        command = "mkdir -p {}".format(result_dir)
+        command = "sudo mkdir -p {}".format(result_dir)
+        print(command)
+        subprocess.call(shlex.split(command))
+
+        command = "sudo chmod 664 {}".format(result_dir)
+        print(command)
         subprocess.call(shlex.split(command))
 
     #-----------------------------------------------------------
