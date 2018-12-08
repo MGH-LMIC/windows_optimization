@@ -1,7 +1,7 @@
 # Window Setting Optimization
 This is the reference implementation of the window setting optimization (WSO) layer for medical image deep learning.
 
-Hyunkwang Lee, Myeongchan Kim, and Synho Do. Practical Window Setting Optimiza-tion for Medical Image Deep Learning arXiv preprint arXiv:1812.00572. 2018 Dec 3. <br/>
+Lee H, Kim M, Do S. Practical Window Setting Optimization for Medical Image Deep Learning. arXiv preprint arXiv:1812.00572. 2018 Dec 3.. <br/>
 arXiv link: https://arxiv.org/abs/1812.00572
 
 ## Abstract
@@ -23,11 +23,10 @@ The recent advancements in deep learning have allowed for numerous applications 
 Please cite windows optimization in your publications if it helps your research:
 
 ```
-@article{2018arXiv181200572L,
+@article{lee2018practical,
   title={Practical Window Setting Optimization for Medical Image Deep Learning},
-  author={{Lee}, Hyunkwang and {Kim}, Myeongchan and {Do}, Synho},
+  author={Lee, Hyunkwang and Kim, Myeongchan and Do, Synho},
   journal={arXiv preprint arXiv:1812.00572},
-  year={2018},
-  month = {Dec},
+  year={2018}
 }
 ```
