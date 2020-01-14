@@ -97,7 +97,10 @@ def get_init_conv_params_relu(wl, ww, upbound_value=255.):
     b = -1. * upbound_value * (wl - ww / 2.) / ww
     return (w, b)
 
-def get_init_conv_params_sigmoid(wl, ww, smooth=1., upbound_value=255.):
+def get_init_conv_params_sigmoid(wl, ww, smooth=None, upbound_value=255.):
+    if smooth is None:
+        smooth = upbound_value / 255.0
+
     w = 2./ww * np.log(upbound_value/smooth - 1.)
     b = -2.*wl/ww * np.log(upbound_value/smooth - 1.)
     return (w, b)
@@ -107,7 +110,10 @@ def get_window_settings_relu(w, b, upbound_value=255.):
     ww = upbound_value / w
     return (wl, ww)
 
-def get_window_settings_sigmoid(w, b, smooth=1., upbound_value=255.):
+def get_window_settings_sigmoid(w, b, smooth=None, upbound_value=255.):
+    if smooth is None:
+        smooth = upbound_value / 255.0
+
     wl = b/w
     ww = 2./w * np.log(upbound_value/smooth - 1.)
     return (wl, ww)
